@@ -1,0 +1,14 @@
+extends base
+include mixins/video
+
+block content 
+    h1 Home
+    each video in fakeVideos
+            +video(video)
+    else
+        h3 No Video
+    div
+        form
+            input(placeholder="id")
+            input(placeholder="pw")
+            button Submit

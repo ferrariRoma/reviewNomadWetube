@@ -1,0 +1,9 @@
+extends base
+
+block content 
+    div
+        h3 #{video.title}'s Edit Page
+        form(method="POST")
+            input(value=`${video.views}`, name="views")
+            button Edit
+    

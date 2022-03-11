@@ -1,0 +1,7 @@
+mixin video(video)
+    div 
+        ul 
+            li
+                a(href="/videos/" + video.id)=video.title
+                br
+                small=video.rating
