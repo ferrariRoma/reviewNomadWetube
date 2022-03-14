@@ -1,0 +1,8 @@
+extends base
+block content
+    h1 Video Upload
+    form(method="POST")
+        input(name="title", placeholder="title", required, maxlength= 80)
+        input(name="description", placeholder="description", required, maxlength= 200)
+        input(name="hashtags", placeholder="hashtags", required)
+        button Upload

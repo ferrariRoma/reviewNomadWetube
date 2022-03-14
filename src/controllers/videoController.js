@@ -1,26 +1,12 @@
-const fakeVideos = [
-  {
-    title: "fuck",
-    rating: 0,
-    views: 1,
-    id: 1,
-  },
-  {
-    title: "you",
-    rating: 2,
-    views: 0,
-    id: 2,
-  },
-  {
-    title: "ha",
-    rating: 4,
-    views: 2,
-    id: 3,
-  },
-];
+import Video from "../models/Video";
 
-export const home = (req, res) => {
-  res.render("home", { title: "Home", fakeVideos });
+export const home = async (req, res) => {
+  try {
+    const videos = await Video.find({});
+    res.render("home", { title: "Home", videos });
+  } catch (err) {
+    res.render("home", { err });
+  }
 };
 
 export const watchVideo = (req, res) => {
@@ -54,8 +40,18 @@ export const postEdit = (req, res) => {
   res.redirect(`/videos/${id}`);
 };
 
-export const uploadVideo = (req, res) => {
-  res.send("Upload");
+export const getUpload = (req, res) => {
+  return res.render("upload", { title: "Upload" });
+};
+
+export const postUpload = (req, res) => {
+  const {
+    body: { title, description, hashtags },
+  } = req;
+  console.log("title: ", title);
+  console.log("description: ", description);
+  console.log("hashtags: ", hashtags);
+  return res.redirect("/");
 };
 
 export const searchVideo = (req, res) => {

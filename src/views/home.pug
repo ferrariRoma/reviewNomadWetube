@@ -3,12 +3,12 @@ include mixins/video
 
 block content 
     h1 Home
-    each video in fakeVideos
-            +video(video)
+    if err
+        h3=err.message
     else
-        h3 No Video
-    div
-        form
-            input(placeholder="id")
-            input(placeholder="pw")
-            button Submit
+        each video in videos
+                +video(video)
+        else
+            h3 No Video
+        div
+            a(href="videos/upload") Upload Video&rarr;
