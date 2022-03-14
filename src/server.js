@@ -18,7 +18,7 @@ app.use("/", rootRouter);
 app.use("/videos", videoRouter);
 
 const handleListen = () => {
-  console.log("Connected localhost:4000 ✅");
+  console.log("✅ Connected localhost:4000");
 };
 
 app.listen(4000, handleListen);
