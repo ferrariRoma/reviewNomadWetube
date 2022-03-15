@@ -1,7 +1,5 @@
 mixin video(video)
-    div 
-        ul 
-            li
-                a(href="/videos/" + video.id)=video.title
-                br
-                small=video.rating
+    div
+        a(href=`/videos/${video.id}`)
+            h3=video.title
+            small=video.hashtags

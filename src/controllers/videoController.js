@@ -5,21 +5,22 @@ export const home = async (req, res) => {
     const videos = await Video.find({});
     res.render("home", { title: "Home", videos });
   } catch (err) {
-    res.render("home", { err });
+    res.status(404).render("home", { err });
   }
 };
 
-export const watchVideo = (req, res) => {
+export const watchVideo = async (req, res) => {
   const {
     params: { id },
   } = req;
-  const video = fakeVideos[id - 1];
-
-  res.render("watch", {
-    video,
-    fakeVideos,
-    title: "Video",
-  });
+  try {
+    const video = await Video.findById(id);
+    const otherVideo = await Video.find({});
+    console.log("videos: ", video);
+    res.status(200).render("watch", { title: "Watch", video, otherVideo });
+  } catch (err) {
+    res.status(404).render("watch", { title: "Watch", err });
+  }
 };
 
 export const getEdit = (req, res) => {
@@ -40,17 +41,24 @@ export const postEdit = (req, res) => {
   res.redirect(`/videos/${id}`);
 };
 
-export const getUpload = (req, res) => {
+export const getUpload = async (req, res) => {
   return res.render("upload", { title: "Upload" });
 };
 
-export const postUpload = (req, res) => {
+export const postUpload = async (req, res) => {
   const {
     body: { title, description, hashtags },
   } = req;
-  console.log("title: ", title);
-  console.log("description: ", description);
-  console.log("hashtags: ", hashtags);
+  const modifyHashs = hashtags.split(",").map((hash) => `#${hash}`);
+  try {
+    const newVideo = await Video.create({
+      title,
+      description,
+      modifyHashs,
+    });
+  } catch (err) {
+    return res.status(400).render("upload", { title: "Upload", err });
+  }
   return res.redirect("/");
 };
 
