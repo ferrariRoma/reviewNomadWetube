@@ -7,10 +7,12 @@ block content
     else
         div 
             h3 `Video Title: #{video.title}`
-            if(video.views !== 0)
-                samll #{video.views} #{video.views === 1 ? "view" : "views"}
+            if (video.meta.views === 0 || video.meta.views === 1)
+                samll #{video.meta.views} view
+            else
+                samll #{video.meta.views} views
             br
-            a(href=+video._id+"/edit") Edit &rarr;
+            a(href=`${video.id}/edit`) Edit &rarr;
         
         each info in otherVideo
             +video(info)

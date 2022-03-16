@@ -23,11 +23,11 @@ export const watchVideo = async (req, res) => {
   }
 };
 
-export const getEdit = (req, res) => {
+export const getEdit = async (req, res) => {
   const {
     params: { id },
   } = req;
-  const video = fakeVideos[id - 1];
+  const video = await Video.findById(id);
   res.render("edit", { title: "Edit Video", video });
 };
 

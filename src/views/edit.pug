@@ -4,6 +4,8 @@ block content
     div
         h3 #{video.title}'s Edit Page
         form(method="POST")
-            input(value=`${video.views}`, name="views")
+            input(name="title", placeholder="title", required, maxlength= 80, value= `${video.title}`)
+            input(name="description", placeholder="description", required, maxlength= 200, value= `${video.description}`)
+            input(name="hashtags", placeholder="hashtags", required, value= `${video.hashtags}`)
             button Edit
     
