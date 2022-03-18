@@ -7,14 +7,18 @@ block content
     else
         div 
             h3 `Video Title: #{video.title}`
+            p=video.hashtags
             if (video.meta.views === 0 || video.meta.views === 1)
                 samll #{video.meta.views} view
             else
                 samll #{video.meta.views} views
             br
             a(href=`${video.id}/edit`) Edit &rarr;
-        
-        each info in otherVideo
-            +video(info)
-        else 
-            h3 No Commend
+            br
+            a(href=`${video.id}/delete`) Delete  &rarr;
+        div
+            h3 Other Videos
+            each info in otherVideo
+                +video(info)
+            else 
+                h3 No Commend
