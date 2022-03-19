@@ -14,8 +14,8 @@ block content
                 samll #{video.meta.views} views
             br
             a(href=`${video.id}/edit`) Edit &rarr;
-            br
-            a(href=`${video.id}/delete`) Delete  &rarr;
+            form(action=`${video.id}/delete`, method="DELETE")
+                button Delete  &rarr;
         div
             h3 Other Videos
             each info in otherVideo

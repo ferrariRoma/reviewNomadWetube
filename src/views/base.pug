@@ -5,6 +5,10 @@ html(lang="ko")
         link(rel="shortcut icon", href="#") 
         link(rel="stylesheet" href="https://unpkg.com/mvp.css")
     body
+        header
+            form(method="GET", action="/video/search")
+                input(placeholder="Search Video")
+                button Search
         main 
         block content
     include partials/footer

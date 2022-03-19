@@ -40,7 +40,7 @@ export const postEdit = async (req, res) => {
   await Video.findByIdAndUpdate(id, {
     title,
     description,
-    hashtags: Video.formatHashs(hashtags),
+    hashtags: Video.formatHashtags(hashtags),
   });
   return res.redirect(`/videos/${id}`);
 };
@@ -57,7 +57,7 @@ export const postUpload = async (req, res) => {
     await Video.create({
       title,
       description,
-      hashtags: Video.formatHashs(hashtags),
+      hashtags: Video.formatHashtags(hashtags),
     });
     return res.redirect("/");
   } catch (err) {
@@ -73,8 +73,8 @@ export const deleteVideo = async (req, res) => {
   if (!video) {
     return res.status(404).render("404", { title: "Video Not Found", err });
   }
-  await Video.findByIdAndRemove(id);
-  res.redirect("/");
+  await Video.findByIdAndDelete(id);
+  return res.redirect("/");
 };
 
 export const searchVideo = (req, res) => {
