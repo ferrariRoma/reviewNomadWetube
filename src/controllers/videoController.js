@@ -85,10 +85,13 @@ export const searchVideo = async (req, res) => {
   const regex = `(.+)?(${search})(.+)?`;
   let videos = await Video.find({
     title: { $regex: new RegExp(`${regex}`, "i") },
-  }).sort({
-    createdAt: "desc",
   });
-  console.log("regex: ", regex);
-  console.log("videos: ", videos);
+  videos = videos.sort((a, b) => {
+    const titleA = a.title;
+    const titleB = b.title;
+    if (titleA > titleB) return 1;
+    if (titleA === titleB) return 0;
+    if (titleA < titleB) return -1;
+  });
   return res.render("search", { title: "Search Video", videos });
 };
