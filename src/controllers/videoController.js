@@ -1,3 +1,4 @@
+import { param } from "express/lib/request";
 import Video from "../models/Video";
 
 export const home = async (req, res) => {
@@ -77,6 +78,17 @@ export const deleteVideo = async (req, res) => {
   return res.redirect("/");
 };
 
-export const searchVideo = (req, res) => {
-  res.send("Search Video");
+export const searchVideo = async (req, res) => {
+  const {
+    query: { search },
+  } = req;
+  const regex = `(.+)?(${search})(.+)?`;
+  let videos = await Video.find({
+    title: { $regex: new RegExp(`${regex}`, "i") },
+  }).sort({
+    createdAt: "desc",
+  });
+  console.log("regex: ", regex);
+  console.log("videos: ", videos);
+  return res.render("search", { title: "Search Video", videos });
 };

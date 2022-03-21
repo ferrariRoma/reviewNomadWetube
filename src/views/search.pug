@@ -1,4 +1,9 @@
-extends mixins/base
+extends base
+include mixins/video
 
 block content
-    h1 Search
+    h1=title 
+    each info in videos
+        +video(info)
+    else 
+        h3 No Result
