@@ -95,7 +95,6 @@ export const searchVideo = async (req, res) => {
     if (titleA < titleB) return -1;
   });
 
-  // 각 비디오의 태그 배열을 하나하나씩 대조해야!
   let tags = await Video.find({
     hashtags: { $regex: new RegExp(`${regex}`, "i") },
   });
