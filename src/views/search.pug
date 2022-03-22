@@ -3,7 +3,16 @@ include mixins/video
 
 block content
     h1=title 
-    each info in videos
-        +video(info)
-    else 
-        h3 No Result
+    div
+        h3 Match title
+        each info in videos
+            +video(info)
+        else 
+            h3 No Result
+    hr
+    div
+        h3 Match tag
+        each info in tags
+            +video(info)
+        else 
+            h3 No Result

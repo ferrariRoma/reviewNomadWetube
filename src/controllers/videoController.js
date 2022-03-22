@@ -83,6 +83,7 @@ export const searchVideo = async (req, res) => {
     query: { search },
   } = req;
   const regex = `(.+)?(${search})(.+)?`;
+
   let videos = await Video.find({
     title: { $regex: new RegExp(`${regex}`, "i") },
   });
@@ -93,5 +94,11 @@ export const searchVideo = async (req, res) => {
     if (titleA === titleB) return 0;
     if (titleA < titleB) return -1;
   });
-  return res.render("search", { title: "Search Video", videos });
+
+  // 각 비디오의 태그 배열을 하나하나씩 대조해야!
+  let tags = await Video.find({
+    hashtags: { $regex: new RegExp(`${regex}`, "i") },
+  });
+
+  return res.render("search", { title: "Search Video", videos, tags });
 };
