@@ -9,26 +9,23 @@ export const postJoin = async (req, res) => {
     body: { username, password, email },
     body,
   } = req;
-  //   console.log(body);
-  //   const regexp = `^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$`;
-  //   const test = new RegExp(
-  //     `^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$`,
-  //     "ig"
-  //   );
-  //   console.log("password: ", password);
-  //   console.log(test.test(password));
-  const str = "table football";
-  const regex = new RegExp("foo*");
-  console.log(regex.test(str));
+  const regExp = new RegExp(
+    `^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^\w\s]).{8,}$`,
+    "i"
+  );
+  if (regExp.test(password)) {
+    const pwError = "반드시 대・소문자, 숫자, 특수문자를 모두 사용!";
+    return res.render("join", { pwError });
+  }
 
-  //   try {
-  //     await User.create({
-  //       username,
-  //       password,
-  //       email,
-  //     });
-  return res.redirect("/");
-  //   } catch (err) {
-  //     return res.status(400).render("home", { err });
-  //   }
+  try {
+    await User.create({
+      username,
+      password,
+      email,
+    });
+    return res.redirect("/");
+  } catch (err) {
+    return res.status(400).render("home", { err });
+  }
 };

@@ -1,8 +1,11 @@
 extends base
 
 block content 
-    form(method="POST")
-        input(name="username",placeholder="username", required)
-        input(name="password",placeholder="password", type="password", required)
-        input(name="email",placeholder="E-mail", type="email", required)
-        button Join
+    if err 
+        h1=err.message
+    else
+        form(method="POST")
+            input(name="username",placeholder="username", required)
+            input(name="password",placeholder="password", type="password", required)
+            input(name="email",placeholder="E-mail", type="email", required)
+            button Join
