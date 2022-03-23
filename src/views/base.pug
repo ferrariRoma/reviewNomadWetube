@@ -5,13 +5,17 @@ html(lang="ko")
         link(rel="shortcut icon", href="#") 
         link(rel="stylesheet" href="https://unpkg.com/mvp.css")
     body
+        div 
+        nav
+            ul
+                li
+                    a(href="/") Go to Home
+                li 
+                    a(href="/Join") Join
         header
-            a(href="/") Go to Home
-            br
-            a(href="/Join") Join
             form(method="GET", action="/search")
                 input(name="search",placeholder="Search Video")
                 button Search
-        main 
-        block content
+        main
+            block content
     include partials/footer
