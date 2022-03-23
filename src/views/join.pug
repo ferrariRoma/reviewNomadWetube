@@ -1,11 +1,12 @@
 extends base
 
 block content 
-    if err 
-        h1=err.message
+    if pwError 
+        h1=pwError
     else
         form(method="POST")
             input(name="username",placeholder="username", required)
             input(name="password",placeholder="password", type="password", required)
+            small 대・소문자, 숫자, 특수문자를 모두 사용
             input(name="email",placeholder="E-mail", type="email", required)
             button Join
