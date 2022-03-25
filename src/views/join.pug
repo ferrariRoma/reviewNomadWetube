@@ -1,13 +1,12 @@
 extends base
 
 block content 
-        if pwError
-            h1=errorMsg
-        else if err 
-            h1=err.message
+        if error
+            h1=error
         form(method="POST")
-            input(name="username",placeholder="username", required, maxlength=20)
+            input(name="username",placeholder="username", type="text", required, maxlength=20)
             small 대・소문자, 숫자, 특수문자를 모두 사용
             input(name="password",placeholder="password", type="password", required, maxlength=30, minlength=8)
+            input(name="password2",placeholder="Confirm password", type="password", required, maxlength=30, minlength=8)
             input(name="email",placeholder="E-mail", type="email", required)
             button Join
