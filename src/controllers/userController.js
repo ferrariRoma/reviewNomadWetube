@@ -64,21 +64,23 @@ export const postLogin = async (req, res) => {
   const {
     body: { username, password },
   } = req;
-  const exists = await User.findOne({ username });
+  const user = await User.findOne({ username });
 
-  if (!exists) {
+  if (!user) {
     return res.status(400).render("login", {
       title: "Login",
       error: "유저명이 틀렸거나 존재하지 않습니다.",
     });
   }
-  const passwordOk = await bcrypt.compare(password, exists.password);
+  const passwordOk = await bcrypt.compare(password, user.password);
   if (!passwordOk) {
     return res.status(400).render("login", {
       title: "Login",
       error: "비밀번호가 틀렸습니다.",
     });
   }
-
+  req.session.loggedIn = true;
+  req.session.user = user;
+  req.session.cookie.maxAge = 3600000;
   return res.redirect("/");
 };
