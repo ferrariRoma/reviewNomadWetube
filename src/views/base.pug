@@ -10,10 +10,14 @@ html(lang="ko")
             ul
                 li
                     a(href="/") Go to Home
-                li 
-                    a(href="/Join") Join
-                li 
-                    a(href="/login") Login
+                if (!loggedIn)
+                    li 
+                        a(href="/Join") Join
+                    li 
+                        a(href="/login") Log in
+                else
+                    li 
+                        a(href="/logout") Log Out
         header
             form(method="GET", action="/search")
                 input(name="search",placeholder="Search Video")

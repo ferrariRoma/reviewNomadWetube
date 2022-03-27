@@ -84,3 +84,10 @@ export const postLogin = async (req, res) => {
   req.session.cookie.maxAge = 3600000;
   return res.redirect("/");
 };
+
+export const logout = (req, res) => {
+  req.session.loggedIn = false;
+  console.log(req.session);
+  console.log(res.locals);
+  return res.redirect("/");
+};
