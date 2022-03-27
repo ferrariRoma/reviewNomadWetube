@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Verification</title>
+    <style>
+      body {
+        box-sizing: border-box;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        background-color: #90bfe3;
+      }
+      main {
+        background-color: rgba(255, 255, 255, 0.5);
+        width: 700px;
+        height: 370px;
+      }
+      button {
+        background-color: #074f7f;
+        width: 100px;
+        height: 70px;
+        border-radius: 25%;
+        cursor: pointer;
+        color: rgb(255, 247, 156);
+        font-size: large;
+        border: none;
+      }
+      button:hover {
+        animation: buttonFocus 0.7s ease-in-out forwards;
+      }
+      @keyframes buttonFocus {
+        from {
+          background-color: #074f7f;
+        }
+        to {
+          background-color: #298fd3;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Email인증 메일입니다. 아래 인증 버튼을 눌러주세요!</h1>
+      <form action="localhost:4000/users/email-verification" method="POST">
+        <button>Verify</button>
+      </form>
+    </main>
+  </body>
+</html>

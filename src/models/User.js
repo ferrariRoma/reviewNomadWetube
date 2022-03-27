@@ -18,6 +18,7 @@ const userSchema = new mongoose.Schema({
     minlength: 8,
   },
   email: { type: String, required: true, unique: true },
+  emailVerification: { type: Boolean, default: false },
 });
 
 userSchema.pre("save", async function () {

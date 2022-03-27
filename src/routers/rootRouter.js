@@ -1,3 +1,4 @@
+"use strict";
 import express from "express";
 import { home, searchVideo } from "../controllers/videoController";
 import {

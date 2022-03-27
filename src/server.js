@@ -1,6 +1,8 @@
+"use strict";
 import express from "express";
-import videoRouter from "./routers/videoRouter";
 import rootRouter from "./routers/rootRouter";
+import videoRouter from "./routers/videoRouter";
+import userRouter from "./routers/userRouter";
 import morgan from "morgan";
 import session from "express-session";
 import res from "express/lib/response";
@@ -20,5 +22,6 @@ app.use(localsMiddleware);
 
 app.use("/", rootRouter);
 app.use("/videos", videoRouter);
+app.use("/users", userRouter);
 
 export default app;

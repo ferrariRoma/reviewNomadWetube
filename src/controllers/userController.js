@@ -1,5 +1,7 @@
+"use strict";
 import User from "../models/User";
 import bcrypt from "bcrypt";
+import nodemailer from "nodemailer";
 
 export const getJoin = (req, res) => {
   return res.render("join", { title: "Join" });
@@ -87,7 +89,71 @@ export const postLogin = async (req, res) => {
 
 export const logout = (req, res) => {
   req.session.loggedIn = false;
-  console.log(req.session);
-  console.log(res.locals);
   return res.redirect("/");
+};
+
+export const getUserEdit = (req, res) => {
+  return res.render("profile", { title: "Profile" });
+};
+
+export const getEmailVerification = async (req, res) => {
+  return res.render("emailVerification", {
+    title: "Verify",
+    verificationMessage: "계정이 인증되지 않았습니다.",
+  });
+};
+
+export const postEmailVerification = async (req, res) => {
+  const {
+    session: {
+      user: { username },
+    },
+    session,
+  } = req;
+
+  console.log(session);
+  const userVerified = await User.findOne({ username });
+  console.log(userVerified);
+
+  let transporter = await nodemailer.createTransport({
+    service: "naver",
+    host: "smtp.naver.com",
+    post: 587,
+    secure: true,
+    auth: {
+      user: process.env.MAIL_EMAIL,
+      pass: process.env.MAIL_PASSWORD,
+    },
+  });
+
+  let info = await transporter.sendMail({
+    from: process.env.MAIL_EMAIL,
+    to: "win9592@gmail.com",
+    subject: "계정인증!!!@@!!!",
+    html: `<div style="text-align: center;">
+    <h3 style="color: #FA5882">ABC</h3>
+    <br />
+    <p>123456</p>
+    </div>`,
+  });
+
+  try {
+    await User.findOneAndUpdate(
+      { username },
+      {
+        emailVerification: true,
+      }
+    );
+    return res.render("emailVerification", {
+      title: "Verify",
+      verificationMessage: "계정이 인증되었습니다!",
+    });
+  } catch (err) {
+    return res
+      .status(500)
+      .render("emailVerification", {
+        err,
+        verificationMessage: "에러발생! 다시 시도해주세요!",
+      });
+  }
 };

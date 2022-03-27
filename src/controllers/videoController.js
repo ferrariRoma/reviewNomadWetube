@@ -1,3 +1,4 @@
+"use strict";
 import { param } from "express/lib/request";
 import Video from "../models/Video";
 
