@@ -105,21 +105,14 @@ export const getEmailVerification = async (req, res) => {
 
 export const postEmailVerification = async (req, res) => {
   const {
-    session: {
-      user: { username },
-    },
-    session,
+    session: { user },
   } = req;
 
-  console.log(session);
-  const userVerified = await User.findOne({ username });
-  console.log(userVerified);
-
-  let transporter = await nodemailer.createTransport({
-    service: "naver",
+  let transporter = nodemailer.createTransport({
+    server: "naver",
     host: "smtp.naver.com",
-    post: 587,
-    secure: true,
+    port: 587,
+    secure: false,
     auth: {
       user: process.env.MAIL_EMAIL,
       pass: process.env.MAIL_PASSWORD,
@@ -128,32 +121,11 @@ export const postEmailVerification = async (req, res) => {
 
   let info = await transporter.sendMail({
     from: process.env.MAIL_EMAIL,
-    to: "win9592@gmail.com",
-    subject: "계정인증!!!@@!!!",
-    html: `<div style="text-align: center;">
-    <h3 style="color: #FA5882">ABC</h3>
-    <br />
-    <p>123456</p>
-    </div>`,
+    to: user.email,
+    subject: "Hello?",
+    html: "<b>Hello World</b>",
   });
+  console.log(info);
 
-  try {
-    await User.findOneAndUpdate(
-      { username },
-      {
-        emailVerification: true,
-      }
-    );
-    return res.render("emailVerification", {
-      title: "Verify",
-      verificationMessage: "계정이 인증되었습니다!",
-    });
-  } catch (err) {
-    return res
-      .status(500)
-      .render("emailVerification", {
-        err,
-        verificationMessage: "에러발생! 다시 시도해주세요!",
-      });
-  }
+  return res.redirect("/");
 };

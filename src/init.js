@@ -3,6 +3,7 @@ import app from "./server";
 import "./db";
 import "./models/Video";
 import "./models/User";
+import "dotenv/config";
 
 const handleListen = () => {
   console.log("✅ Connected localhost:4000");
