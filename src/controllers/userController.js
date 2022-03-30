@@ -107,8 +107,8 @@ export const getEmailVerification = async (req, res) => {
   let transporter = nodemailer.createTransport({
     server: "naver",
     host: "smtp.naver.com",
-    port: 587,
-    secure: false,
+    port: 465,
+    secure: true,
     auth: {
       user: process.env.MAIL_EMAIL,
       pass: process.env.MAIL_PASSWORD,
@@ -163,7 +163,7 @@ export const getEmailVerification = async (req, res) => {
       </head>
       <body>
         <main>
-          <h1>Email인증 메일입니다. 아래 인증 버튼을 눌러주세요!</h1>
+          <h1>Email인증 메일입니다. 아래 URL을 눌러주세요!</h1>
           <a>http://localhost:4000/users/email-verification/${_id}</a>
         </main>
       </body>
@@ -172,7 +172,7 @@ export const getEmailVerification = async (req, res) => {
   };
 
   try {
-    let info = await transporter.sendMail(option);
+    await transporter.sendMail(option);
     return res.render("emailVerification", {
       title: "Verify",
       verificationMessage: "인증메일을 보냈습니다!",
