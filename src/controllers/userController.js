@@ -97,17 +97,13 @@ export const getUserEdit = (req, res) => {
 };
 
 export const getEmailVerification = async (req, res) => {
-  return res.render("emailVerification", {
-    title: "Verify",
-    verificationMessage: "계정이 인증되지 않았습니다.",
-  });
-};
-
-export const postEmailVerification = async (req, res) => {
   const {
+    session: {
+      user: { _id, email },
+    },
     session: { user },
   } = req;
-
+  console.log(user);
   let transporter = nodemailer.createTransport({
     server: "naver",
     host: "smtp.naver.com",
@@ -119,13 +115,92 @@ export const postEmailVerification = async (req, res) => {
     },
   });
 
-  let info = await transporter.sendMail({
+  const option = {
     from: process.env.MAIL_EMAIL,
-    to: user.email,
+    to: email,
     subject: "Hello?",
-    html: "<b>Hello World</b>",
-  });
-  console.log(info);
+    html: `<!DOCTYPE html>
+    <html lang="ko">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Verification</title>
+        <style>
+          body {
+            box-sizing: border-box;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            background-color: #90bfe3;
+          }
+          main {
+            background-color: rgba(255, 255, 255, 0.5);
+            width: 700px;
+            height: 370px;
+          }
+          button {
+            background-color: #074f7f;
+            width: 100px;
+            height: 70px;
+            border-radius: 25%;
+            cursor: pointer;
+            color: rgb(255, 247, 156);
+            font-size: large;
+            border: none;
+          }
+          button:hover {
+            animation: buttonFocus 0.7s ease-in-out forwards;
+          }
+          @keyframes buttonFocus {
+            from {
+              background-color: #074f7f;
+            }
+            to {
+              background-color: #298fd3;
+            }
+          }
+        </style>
+      </head>
+      <body>
+        <main>
+          <h1>Email인증 메일입니다. 아래 인증 버튼을 눌러주세요!</h1>
+          <a>http://localhost:4000/users/email-verification/${_id}</a>
+        </main>
+      </body>
+    </html>
+    `,
+  };
 
-  return res.redirect("/");
+  try {
+    let info = await transporter.sendMail(option);
+    return res.render("emailVerification", {
+      title: "Verify",
+      verificationMessage: "인증메일을 보냈습니다!",
+    });
+  } catch (err) {
+    return res.render("emailVerification", {
+      title: "Verify",
+      err,
+    });
+  }
+};
+
+export const postEmailVerification = async (req, res) => {
+  const {
+    session: {
+      user: { _id },
+    },
+  } = req;
+
+  try {
+    await User.findByIdAndUpdate(_id, {
+      emailVerification: true,
+    });
+    return res.redirect("/");
+  } catch (err) {
+    return res.render("emailVerification", {
+      title: "Verify",
+      err,
+    });
+  }
 };
