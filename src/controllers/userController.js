@@ -83,7 +83,6 @@ export const postLogin = async (req, res) => {
   }
   req.session.loggedIn = true;
   req.session.user = user;
-  req.session.cookie.maxAge = 3600000;
   return res.redirect("/");
 };
 
@@ -173,7 +172,7 @@ export const getEmailVerification = async (req, res) => {
 
   try {
     await transporter.sendMail(option);
-    return res.render("emailVerification", {
+    return res.rediect("/", {
       title: "Verify",
       verificationMessage: "인증메일을 보냈습니다!",
     });
