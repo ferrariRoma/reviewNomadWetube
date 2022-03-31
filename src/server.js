@@ -4,11 +4,12 @@ import rootRouter from "./routers/rootRouter";
 import videoRouter from "./routers/videoRouter";
 import userRouter from "./routers/userRouter";
 import morgan from "morgan";
-import MongoStore from "connect-mongo";
 import session from "express-session";
 import res from "express/lib/response";
 import { localsMiddleware } from "./middleware";
 import { options } from "nodemon/lib/config";
+import "dotenv/config";
+import MongoStore from "connect-mongo";
 
 const app = express();
 const logger = morgan("dev");
