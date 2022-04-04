@@ -2,6 +2,7 @@
 import User from "../models/User";
 import bcrypt from "bcrypt";
 import nodemailer from "nodemailer";
+import fetch from "node-fetch";
 
 export const getJoin = (req, res) => {
   return res.render("join", { title: "Join" });
@@ -202,4 +203,45 @@ export const postEmailVerification = async (req, res) => {
       err,
     });
   }
+};
+
+export const startNaverLogin = (req, res) => {
+  const baseUrl = "https://nid.naver.com/oauth2.0/authorize";
+  const callbackUrl = "http%3a%2f%2flocalhost%3a4000%2fusers%2fnaver%2ffinish";
+  const config = {
+    client_id: process.env.CLIENT_ID,
+    redirect_uri: callbackUrl,
+    response_type: "code",
+    state: process.env.NAVER_CODE,
+    // scope: "",
+  };
+  const params = new URLSearchParams(config);
+  const result = `${baseUrl}?${params}`;
+  return res.redirect(result);
+};
+
+export const finishNaverLogin = async (req, res) => {
+  const {
+    query: { error_description },
+  } = req;
+  if (error_description) {
+    return res.render("login", { error: error_description });
+  }
+  const baseUrl = "https://nid.naver.com/oauth2.0/token";
+  const config = {
+    client_id: process.env.CLIENT_ID,
+    client_secret: process.env.CLIENT_SECRET,
+    grant_type: "authorization_code",
+    code: req.query.code,
+    state: req.query.state,
+  };
+  const params = new URLSearchParams(config);
+  const result = `${baseUrl}?${params}`;
+  const tokenRequest = await fetch(result, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+    },
+  }).json();
+  return res.send("Hello");
 };

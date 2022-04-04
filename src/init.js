@@ -1,9 +1,9 @@
 "use strict";
-import app from "./server";
+import "dotenv/config";
 import "./db";
 import "./models/Video";
 import "./models/User";
-import "dotenv/config";
+import app from "./server";
 
 const handleListen = () => {
   console.log("✅ Connected localhost:4000");
