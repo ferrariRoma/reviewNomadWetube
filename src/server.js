@@ -1,14 +1,14 @@
 "use strict";
 import express from "express";
-import rootRouter from "./routers/rootRouter";
-import videoRouter from "./routers/videoRouter";
-import userRouter from "./routers/userRouter";
 import morgan from "morgan";
 import session from "express-session";
+import MongoStore from "connect-mongo";
 import res from "express/lib/response";
 import { localsMiddleware } from "./middleware";
 import { options } from "nodemon/lib/config";
-import MongoStore from "connect-mongo";
+import rootRouter from "./routers/rootRouter";
+import videoRouter from "./routers/videoRouter";
+import userRouter from "./routers/userRouter";
 
 const app = express();
 const logger = morgan("dev");

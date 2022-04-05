@@ -1,8 +1,9 @@
 "use strict";
+import fetch from "node-fetch";
+import nodemailer from "nodemailer";
 import User from "../models/User";
 import bcrypt from "bcrypt";
-import nodemailer from "nodemailer";
-import fetch from "node-fetch";
+import { token } from "morgan";
 
 export const getJoin = (req, res) => {
   return res.render("join", { title: "Join" });
@@ -207,13 +208,13 @@ export const postEmailVerification = async (req, res) => {
 
 export const startNaverLogin = (req, res) => {
   const baseUrl = "https://nid.naver.com/oauth2.0/authorize";
-  const callbackUrl = "http%3a%2f%2flocalhost%3a4000%2fusers%2fnaver%2ffinish";
+  const callbackUrl = "http://localhost:4000/users/naver/finish";
   const config = {
     client_id: process.env.CLIENT_ID,
     redirect_uri: callbackUrl,
     response_type: "code",
     state: process.env.NAVER_CODE,
-    // scope: "",
+    // scope: "read=email",
   };
   const params = new URLSearchParams(config);
   const result = `${baseUrl}?${params}`;
@@ -225,6 +226,7 @@ export const finishNaverLogin = async (req, res) => {
     query: { error_description },
   } = req;
   if (error_description) {
+    console.log(error_description);
     return res.render("login", { error: error_description });
   }
   const baseUrl = "https://nid.naver.com/oauth2.0/token";
@@ -237,11 +239,28 @@ export const finishNaverLogin = async (req, res) => {
   };
   const params = new URLSearchParams(config);
   const result = `${baseUrl}?${params}`;
-  const tokenRequest = await fetch(result, {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-    },
-  }).json();
+  const tokenRequest = await (
+    await fetch(result, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+      },
+    })
+  ).json();
+  console.log(tokenRequest);
+  if ("access_token" in tokenRequest) {
+    const { access_token } = tokenRequest;
+    const apiUrl = "https://openapi.naver.com/v1/nid/me";
+
+    const userData = await (
+      await fetch(`${apiUrl}`, {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      })
+    ).json();
+
+    console.log(userData);
+  }
   return res.send("Hello");
 };
