@@ -4,7 +4,6 @@ import nodemailer from "nodemailer";
 import User from "../models/User";
 import bcrypt from "bcrypt";
 import { token } from "morgan";
-import session from "express-session";
 
 export const getJoin = (req, res) => {
   return res.render("join", { title: "Join" });
@@ -74,7 +73,7 @@ export const postLogin = async (req, res) => {
   if (!user) {
     return res.status(400).render("login", {
       title: "Login",
-      error: "유저명이 틀렸거나 존재하지 않습니다.",
+      error: "이메일이 틀렸거나 존재하지 않습니다.",
     });
   }
   const passwordOk = await bcrypt.compare(password, user.password);
@@ -105,7 +104,6 @@ export const getEmailVerification = async (req, res) => {
     },
     session: { user },
   } = req;
-  console.log(user);
   let transporter = nodemailer.createTransport({
     server: "naver",
     host: "smtp.naver.com",
@@ -210,11 +208,12 @@ export const postEmailVerification = async (req, res) => {
 export const startNaverLogin = (req, res) => {
   const baseUrl = "https://nid.naver.com/oauth2.0/authorize";
   const callbackUrl = "http://localhost:4000/users/naver/finish";
+  const state = "ihdo4ih580bf1y7o849w6a31";
   const config = {
-    response_type: "code",
     client_id: process.env.CLIENT_ID,
     redirect_uri: callbackUrl,
-    state: process.env.NAVER_STATE,
+    response_type: "code",
+    state,
   };
   const params = new URLSearchParams(config);
   const result = `${baseUrl}?${params}`;
@@ -223,19 +222,22 @@ export const startNaverLogin = (req, res) => {
 
 export const finishNaverLogin = async (req, res) => {
   const {
-    query: { error_description },
+    query: { error_description, state, code },
   } = req;
   if (error_description) {
     console.log(error_description);
-    return res.status(401).render("login", { error: error_description });
+    return res
+      .status(401)
+      .render("login", { title: "Login", error: error_description });
   }
+
   const baseUrl = "https://nid.naver.com/oauth2.0/token";
   const config = {
     client_id: process.env.CLIENT_ID,
     client_secret: process.env.CLIENT_SECRET,
     grant_type: "authorization_code",
-    code: req.query.code,
-    state: req.query.state,
+    code,
+    state,
   };
   const params = new URLSearchParams(config);
   const result = `${baseUrl}?${params}`;
@@ -247,7 +249,6 @@ export const finishNaverLogin = async (req, res) => {
       },
     })
   ).json();
-
   if ("access_token" in tokenRequest) {
     const { access_token } = tokenRequest;
     const apiUrl = "https://openapi.naver.com/v1/nid/me";
@@ -264,7 +265,20 @@ export const finishNaverLogin = async (req, res) => {
       response: { email, nickname },
     } = userData;
 
-    return res.render("join", { title: "Join", email, nickname });
+    const user = await User.findOne({ email });
+    if (!user) {
+      const user = User.create({
+        username: nickname,
+        password: "",
+        email,
+        emailVerification: true,
+        socialUser: true,
+      });
+    }
+    req.session.user = user;
+    req.session.loggedIn = true;
+    console.log("여기");
+    return res.redirect("/");
   } else {
     return res.status(404).redirect("/login");
   }
