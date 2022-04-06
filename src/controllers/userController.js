@@ -4,6 +4,7 @@ import nodemailer from "nodemailer";
 import User from "../models/User";
 import bcrypt from "bcrypt";
 import { token } from "morgan";
+import session from "express-session";
 
 export const getJoin = (req, res) => {
   return res.render("join", { title: "Join" });
@@ -89,7 +90,8 @@ export const postLogin = async (req, res) => {
 };
 
 export const logout = (req, res) => {
-  req.session.loggedIn = false;
+  req.flash("info", "bye");
+  req.session.destroy();
   return res.redirect("/");
 };
 
@@ -210,11 +212,10 @@ export const startNaverLogin = (req, res) => {
   const baseUrl = "https://nid.naver.com/oauth2.0/authorize";
   const callbackUrl = "http://localhost:4000/users/naver/finish";
   const config = {
+    response_type: "code",
     client_id: process.env.CLIENT_ID,
     redirect_uri: callbackUrl,
-    response_type: "code",
-    state: process.env.NAVER_CODE,
-    // scope: "read=email",
+    state: process.env.NAVER_STATE,
   };
   const params = new URLSearchParams(config);
   const result = `${baseUrl}?${params}`;
@@ -227,7 +228,7 @@ export const finishNaverLogin = async (req, res) => {
   } = req;
   if (error_description) {
     console.log(error_description);
-    return res.render("login", { error: error_description });
+    return res.status(401).render("login", { error: error_description });
   }
   const baseUrl = "https://nid.naver.com/oauth2.0/token";
   const config = {
@@ -247,7 +248,7 @@ export const finishNaverLogin = async (req, res) => {
       },
     })
   ).json();
-  console.log(tokenRequest);
+
   if ("access_token" in tokenRequest) {
     const { access_token } = tokenRequest;
     const apiUrl = "https://openapi.naver.com/v1/nid/me";
@@ -260,7 +261,21 @@ export const finishNaverLogin = async (req, res) => {
       })
     ).json();
 
-    console.log(userData);
+    const {
+      response: { id, nickname, profile_image, email },
+    } = userData;
+
+    const newUser = await User.create({
+      username: nickname,
+      password: "",
+      email,
+      emailVerification: true,
+      socialUser: true,
+    });
+    req.session.user = newUser;
+    req.session.loggedIn = true;
+    return res.redirect("/");
+  } else {
+    return res.status(404).redirect("/login");
   }
-  return res.send("Hello");
 };

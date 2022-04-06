@@ -12,13 +12,11 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: true,
     trim: true,
-    maxlength: 30,
-    minlength: 8,
   },
   email: { type: String, required: true, unique: true },
   emailVerification: { type: Boolean, default: false },
+  socialUser: { type: Boolean, required: true, default: false },
 });
 
 userSchema.pre("save", async function () {
