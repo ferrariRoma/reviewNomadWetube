@@ -67,9 +67,9 @@ export const getLogin = (req, res) => {
 
 export const postLogin = async (req, res) => {
   const {
-    body: { username, password },
+    body: { email, password },
   } = req;
-  const user = await User.findOne({ username });
+  const user = await User.findOne({ email });
 
   if (!user) {
     return res.status(400).render("login", {
@@ -90,7 +90,6 @@ export const postLogin = async (req, res) => {
 };
 
 export const logout = (req, res) => {
-  req.flash("info", "bye");
   req.session.destroy();
   return res.redirect("/");
 };
@@ -262,19 +261,10 @@ export const finishNaverLogin = async (req, res) => {
     ).json();
 
     const {
-      response: { id, nickname, profile_image, email },
+      response: { email, nickname },
     } = userData;
 
-    const newUser = await User.create({
-      username: nickname,
-      password: "",
-      email,
-      emailVerification: true,
-      socialUser: true,
-    });
-    req.session.user = newUser;
-    req.session.loggedIn = true;
-    return res.redirect("/");
+    return res.render("join", { title: "Join", email, nickname });
   } else {
     return res.status(404).redirect("/login");
   }
