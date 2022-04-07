@@ -1,5 +1,6 @@
 "use strict";
 import express from "express";
+import Logger from "nodemon/lib/utils/log";
 import {
   getUpload,
   postUpload,
@@ -8,12 +9,26 @@ import {
   postEdit,
   deleteVideo,
 } from "../controllers/videoController";
+import { emailVerifiMiddleware, loggedOnlyMiddleware } from "../middleware";
 
 const videoRouter = express.Router();
 
-videoRouter.route("/upload").get(getUpload).post(postUpload);
+videoRouter
+  .route("/upload")
+  .all(loggedOnlyMiddleware, emailVerifiMiddleware)
+  .get(getUpload)
+  .post(postUpload);
 videoRouter.get("/:id([0-9a-f]{24})", watchVideo);
-videoRouter.route("/:id([0-9a-f]{24})/edit").get(getEdit).post(postEdit);
-videoRouter.get("/:id([0-9a-f]{24})/delete", deleteVideo);
+videoRouter
+  .route("/:id([0-9a-f]{24})/edit")
+  .all(loggedOnlyMiddleware, emailVerifiMiddleware)
+  .get(getEdit)
+  .post(postEdit);
+videoRouter.get(
+  "/:id([0-9a-f]{24})/delete",
+  loggedOnlyMiddleware,
+  emailVerifiMiddleware,
+  deleteVideo
+);
 
 export default videoRouter;

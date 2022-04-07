@@ -7,13 +7,27 @@ import {
   startNaverLogin,
   finishNaverLogin,
 } from "../controllers/userController";
+import {
+  emailNotVerifiMiddleware,
+  emailVerifiMiddleware,
+  loggedOnlyMiddleware,
+  publicOnlyMiddleware,
+} from "../middleware";
 
 const userRouter = express.Router();
 
-userRouter.get("/edit", getUserEdit);
-userRouter.get("/email-verification/", getEmailVerification);
-userRouter.get("/email-verification/:id([0-9a-f]{24})", postEmailVerification);
-userRouter.get("/naver/start", startNaverLogin);
-userRouter.get("/naver/finish", finishNaverLogin);
+userRouter.get("/edit", loggedOnlyMiddleware, getUserEdit);
+userRouter.get(
+  "/email-verification/",
+  emailNotVerifiMiddleware,
+  getEmailVerification
+);
+userRouter.get(
+  "/email-verification/:id([0-9a-f]{24})",
+  emailNotVerifiMiddleware,
+  postEmailVerification
+);
+userRouter.get("/naver/start", publicOnlyMiddleware, startNaverLogin);
+userRouter.get("/naver/finish", publicOnlyMiddleware, finishNaverLogin);
 
 export default userRouter;

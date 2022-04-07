@@ -2,4 +2,7 @@ extends base
 
 block content 
     h1 Profile
-    a(href="/users/email-verification") 이메일 인증!
+    if loggedInUser.emailVerification
+        h3 이메일 인증완료!
+    else
+        a(href="/users/email-verification") 이메일 인증!
