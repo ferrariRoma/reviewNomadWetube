@@ -208,12 +208,11 @@ export const postEmailVerification = async (req, res) => {
 export const startNaverLogin = (req, res) => {
   const baseUrl = "https://nid.naver.com/oauth2.0/authorize";
   const callbackUrl = "http://localhost:4000/users/naver/finish";
-  const state = "ihdo4ih580bf1y7o849w6a31";
   const config = {
     client_id: process.env.CLIENT_ID,
     redirect_uri: callbackUrl,
     response_type: "code",
-    state,
+    state: process.env.NAVER_STATE,
   };
   const params = new URLSearchParams(config);
   const result = `${baseUrl}?${params}`;
@@ -241,29 +240,27 @@ export const finishNaverLogin = async (req, res) => {
   };
   const params = new URLSearchParams(config);
   const result = `${baseUrl}?${params}`;
-  const tokenRequest = await (
-    await fetch(result, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-      },
-    })
-  ).json();
-  if ("access_token" in tokenRequest) {
-    const { access_token } = tokenRequest;
+  const tokenRequest = await fetch(result, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+    },
+  });
+  const tokenJson = await tokenRequest.json();
+  if ("access_token" in tokenJson) {
+    const { access_token } = tokenJson;
     const apiUrl = "https://openapi.naver.com/v1/nid/me";
 
-    const userData = await (
-      await fetch(`${apiUrl}`, {
-        headers: {
-          Authorization: `Bearer ${access_token}`,
-        },
-      })
-    ).json();
+    const userData = await fetch(`${apiUrl}`, {
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+      },
+    });
+    const userJson = await userData.json();
 
     const {
       response: { email, nickname },
-    } = userData;
+    } = userJson;
 
     const user = await User.findOne({ email });
     if (!user) {
@@ -277,7 +274,6 @@ export const finishNaverLogin = async (req, res) => {
     }
     req.session.user = user;
     req.session.loggedIn = true;
-    console.log("여기");
     return res.redirect("/");
   } else {
     return res.status(404).redirect("/login");
