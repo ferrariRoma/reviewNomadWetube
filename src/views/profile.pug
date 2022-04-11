@@ -2,7 +2,16 @@ extends base
 
 block content 
     h1 Profile
+    form(method="POST")
+        input(name="email",placeholder="E-mail", type="email", required, readonly, value=loggedInUser.email)
+        input(name="username",placeholder="username", type="text", required, maxlength=20, value=loggedInUser.username)
+        button Edit
+    hr
+    h3 비밀번호 변경
+    form(method="POST")
+    hr
+    h3 Email인증
     if loggedInUser.emailVerification
         h3 이메일 인증완료!
     else
-        a(href="/users/email-verification") 이메일 인증!
+        a(href="/users/email-verification") 이메일 인증하기!

@@ -6,6 +6,7 @@ import {
   getUserEdit,
   startNaverLogin,
   finishNaverLogin,
+  postUserEdit,
 } from "../controllers/userController";
 import {
   emailNotVerifiMiddleware,
@@ -16,7 +17,11 @@ import {
 
 const userRouter = express.Router();
 
-userRouter.get("/edit", loggedOnlyMiddleware, getUserEdit);
+userRouter
+  .route("/edit")
+  .all(loggedOnlyMiddleware)
+  .get(getUserEdit)
+  .post(postUserEdit);
 userRouter.get(
   "/email-verification/",
   emailNotVerifiMiddleware,

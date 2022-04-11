@@ -96,6 +96,15 @@ export const logout = (req, res) => {
 export const getUserEdit = (req, res) => {
   return res.render("profile", { title: "Profile" });
 };
+export const postUserEdit = async (req, res) => {
+  const {
+    session: { user },
+    body: { username, email },
+  } = req;
+  const existsProfile = await User.findOneAndUpdate(email, { username });
+  console.log(existsProfile);
+  return res.render("profile", { title: "Profile" });
+};
 
 export const getEmailVerification = async (req, res) => {
   const {
@@ -164,6 +173,7 @@ export const getEmailVerification = async (req, res) => {
       <body>
         <main>
           <h1>Email인증 메일입니다. 아래 URL을 눌러주세요!</h1>
+          <h3>링크가 작동되지 않을 시 복사해서 주소창에 붙여넣어주세요!</h3>
           <a>http://localhost:4000/users/email-verification/${_id}</a>
         </main>
       </body>
@@ -173,7 +183,7 @@ export const getEmailVerification = async (req, res) => {
 
   try {
     await transporter.sendMail(option);
-    return res.rediect("/", {
+    return res.redirect("/", {
       title: "Verify",
       verificationMessage: "인증메일을 보냈습니다!",
     });
