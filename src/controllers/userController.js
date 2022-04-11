@@ -7,7 +7,7 @@ import { token } from "morgan";
 import session from "express-session";
 
 export const getJoin = (req, res) => {
-  return res.render("join", { title: "Join" });
+  return res.render("", { title: "Join" });
 };
 
 export const postJoin = async (req, res) => {
@@ -57,7 +57,7 @@ export const postJoin = async (req, res) => {
     });
     return res.redirect("/login");
   } catch (err) {
-    return res.status(400).render("join", { title: "Join", err });
+    return res.status(400).redirect("/join", { title: "Join", err });
   }
 };
 
@@ -102,15 +102,17 @@ export const postUserEdit = async (req, res) => {
     session: {
       user: { _id, username: sessionUsername },
     },
-    body: { username, email },
+    body: { username },
   } = req;
   const checkExists = await User.findOne({ username });
-  if (checkExists) {
+  // 다른 유저의 사용여부
+  if (checkExists && checkExists._id !== _id) {
     return res.render("profile", {
       title: "Profile",
       err: "이미 사용중인 유저명입니다.",
     });
   }
+
   if (username !== sessionUsername) {
     const modifiedProfile = await User.findByIdAndUpdate(
       _id,
@@ -118,8 +120,59 @@ export const postUserEdit = async (req, res) => {
       { new: true }
     );
     req.session.user = modifiedProfile;
+    res.locals.loggedInUser = req.session.user;
   }
   return res.render("profile", { title: "Profile" });
+};
+
+export const getChangePassword = (req, res) => {
+  return res.render("change-password", { title: "Password" });
+};
+
+export const postChangePassword = async (req, res) => {
+  const {
+    body: { oldPassword, password, password2 },
+    session: { user },
+  } = req;
+  // 기존pw확인
+  const checkExistPassword = await bcrypt.compare(oldPassword, user.password);
+  if (!checkExistPassword) {
+    return res.status(400).render("change-password", {
+      title: "Password",
+      err: "기존 비밀번호가 틀렸습니다.",
+    });
+  }
+  // 기존pw와 새pw확인
+  if (oldPassword === password) {
+    return res.status(400).render("change-password", {
+      title: "Password",
+      err: "이전 비밀번호와 동일합니다.",
+    });
+  }
+  // 비밀번호 특수문자 확인
+  const regExp = new RegExp(
+    `^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^\w\s]).{8,}$`,
+    "i"
+  );
+  if (!regExp.test(password)) {
+    return res.status(400).render("change-password", {
+      title: "Password",
+      error: "반드시 대・소문자, 숫자, 특수문자를 모두 사용!",
+    });
+  }
+  // 새pw확인
+  if (password !== password2) {
+    return res.status(400).render("change-password", {
+      title: "Password",
+      err: "새 패스워드가 틀립니다.",
+    });
+  }
+  // 패스워드 변경 진행
+  const foundUser = await User.findById(user._id);
+  foundUser.password = password;
+  await foundUser.save();
+  req.session.user.password = foundUser.password;
+  return res.render("change-password", { title: "Password" });
 };
 
 export const getEmailVerification = async (req, res) => {
@@ -219,9 +272,15 @@ export const postEmailVerification = async (req, res) => {
   } = req;
 
   try {
-    await User.findByIdAndUpdate(_id, {
-      emailVerification: true,
-    });
+    const verifiedUser = await User.findByIdAndUpdate(
+      _id,
+      {
+        emailVerification: true,
+      },
+      { new: true }
+    );
+    req.session.user = verifiedUser;
+    res.locals.loggedInUser = req.session.user;
     return res.redirect("/");
   } catch (err) {
     return res.render("emailVerification", {
@@ -302,6 +361,8 @@ export const finishNaverLogin = async (req, res) => {
     req.session.loggedIn = true;
     return res.redirect("/");
   } else {
-    return res.status(404).redirect("/login");
+    return res
+      .status(404)
+      .redirect("/login", { error: "이미 사용 중인 이메일 입니다." });
   }
 };

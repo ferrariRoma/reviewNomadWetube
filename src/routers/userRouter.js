@@ -1,5 +1,6 @@
 "use strict";
 import express from "express";
+import { get } from "express/lib/response";
 import {
   getEmailVerification,
   postEmailVerification,
@@ -7,6 +8,8 @@ import {
   startNaverLogin,
   finishNaverLogin,
   postUserEdit,
+  getChangePassword,
+  postChangePassword,
 } from "../controllers/userController";
 import {
   emailNotVerifiMiddleware,
@@ -22,13 +25,20 @@ userRouter
   .all(loggedOnlyMiddleware)
   .get(getUserEdit)
   .post(postUserEdit);
+userRouter
+  .route("/change-password")
+  .all(loggedOnlyMiddleware)
+  .get(getChangePassword)
+  .post(postChangePassword);
 userRouter.get(
   "/email-verification/",
+  loggedOnlyMiddleware,
   emailNotVerifiMiddleware,
   getEmailVerification
 );
 userRouter.get(
   "/email-verification/:id([0-9a-f]{24})",
+  loggedOnlyMiddleware,
   emailNotVerifiMiddleware,
   postEmailVerification
 );
