@@ -4,7 +4,7 @@ block content
     h1 Profile
     if err 
         h1=err
-    form(method="POST")
+    form(method="POST", enctype="multipart/form-data")
         input(name="email",placeholder="E-mail", type="email", required, readonly, value=loggedInUser.email)
         input(name="username",placeholder="username", type="text", required, maxlength=20, value=loggedInUser.username)
         button Edit

@@ -1,4 +1,6 @@
 "use strict";
+import multer from "multer";
+
 // locals Middleware
 export const localsMiddleware = (req, res, next) => {
   res.locals.loggedIn = Boolean(req.session.loggedIn);
@@ -38,3 +40,9 @@ export const emailNotVerifiMiddleware = (req, res, next) => {
     return res.status(403).redirect("/");
   }
 };
+
+// multerMiddleware for uploading
+export const avatarUploadMiddleware = multer({
+  dest: "uploads/avatars/",
+  limits: { fieldSize: 5000000 },
+});

@@ -12,6 +12,7 @@ import {
   postChangePassword,
 } from "../controllers/userController";
 import {
+  avatarUploadMiddleware,
   emailNotVerifiMiddleware,
   emailVerifiMiddleware,
   loggedOnlyMiddleware,
@@ -24,7 +25,7 @@ userRouter
   .route("/edit")
   .all(loggedOnlyMiddleware)
   .get(getUserEdit)
-  .post(postUserEdit);
+  .post(avatarUploadMiddleware, postUserEdit);
 userRouter
   .route("/change-password")
   .all(loggedOnlyMiddleware)
