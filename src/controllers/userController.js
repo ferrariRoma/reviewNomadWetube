@@ -4,6 +4,7 @@ import nodemailer from "nodemailer";
 import User from "../models/User";
 import bcrypt from "bcrypt";
 import { token } from "morgan";
+import session from "express-session";
 
 export const getJoin = (req, res) => {
   return res.render("join", { title: "Join" });
@@ -98,11 +99,26 @@ export const getUserEdit = (req, res) => {
 };
 export const postUserEdit = async (req, res) => {
   const {
-    session: { user },
+    session: {
+      user: { _id, username: sessionUsername },
+    },
     body: { username, email },
   } = req;
-  const existsProfile = await User.findOneAndUpdate(email, { username });
-  console.log(existsProfile);
+  const checkExists = await User.findOne({ username });
+  if (checkExists) {
+    return res.render("profile", {
+      title: "Profile",
+      err: "이미 사용중인 유저명입니다.",
+    });
+  }
+  if (username !== sessionUsername) {
+    const modifiedProfile = await User.findByIdAndUpdate(
+      _id,
+      { username },
+      { new: true }
+    );
+    req.session.user = modifiedProfile;
+  }
   return res.render("profile", { title: "Profile" });
 };
 
