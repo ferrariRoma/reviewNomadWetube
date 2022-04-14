@@ -17,6 +17,7 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   emailVerification: { type: Boolean, default: false },
   socialUser: { type: Boolean, default: false },
+  avatarUrl: String,
 });
 
 userSchema.pre("save", async function () {

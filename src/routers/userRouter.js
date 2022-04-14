@@ -25,7 +25,7 @@ userRouter
   .route("/edit")
   .all(loggedOnlyMiddleware)
   .get(getUserEdit)
-  .post(avatarUploadMiddleware, postUserEdit);
+  .post(avatarUploadMiddleware.single("avatarUrl"), postUserEdit);
 userRouter
   .route("/change-password")
   .all(loggedOnlyMiddleware)

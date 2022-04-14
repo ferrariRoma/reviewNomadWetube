@@ -100,28 +100,33 @@ export const getUserEdit = (req, res) => {
 export const postUserEdit = async (req, res) => {
   const {
     session: {
-      user: { _id, username: sessionUsername },
+      user: { _id, username: sessionUsername, avatarUrl },
     },
     body: { username },
+    file,
   } = req;
+
+  console.log("before file: ", file);
+  console.log("locals: ", res.locals);
   const checkExists = await User.findOne({ username });
   // 다른 유저의 사용여부
-  if (checkExists && checkExists._id !== _id) {
+  if (checkExists && checkExists._id.toString() !== _id.toString()) {
     return res.render("profile", {
       title: "Profile",
       err: "이미 사용중인 유저명입니다.",
     });
   }
 
-  if (username !== sessionUsername) {
-    const modifiedProfile = await User.findByIdAndUpdate(
-      _id,
-      { username },
-      { new: true }
-    );
-    req.session.user = modifiedProfile;
-    res.locals.loggedInUser = req.session.user;
-  }
+  const modifiedProfile = await User.findByIdAndUpdate(
+    _id,
+    { username, avatarUrl: file ? file.path : avatarUrl },
+    { new: true }
+  );
+  req.session.user = modifiedProfile;
+  res.locals.loggedInUser = req.session.user;
+  console.log("after file: ", file);
+  console.log("after locals: ", res.locals);
+
   return res.render("profile", { title: "Profile" });
 };
 
@@ -344,7 +349,7 @@ export const finishNaverLogin = async (req, res) => {
     const userJson = await userData.json();
 
     const {
-      response: { email, nickname },
+      response: { email, nickname, profile_image },
     } = userJson;
 
     const user = await User.findOne({ email });
@@ -355,10 +360,12 @@ export const finishNaverLogin = async (req, res) => {
         email,
         emailVerification: true,
         socialUser: true,
+        avatarUrl: profile_image,
       });
     }
     req.session.user = user;
     req.session.loggedIn = true;
+    res.locals.loggedInUser = req.session.user;
     return res.redirect("/");
   } else {
     return res
