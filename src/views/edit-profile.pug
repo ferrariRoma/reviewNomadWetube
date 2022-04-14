@@ -1,0 +1,22 @@
+extends base
+
+block content
+    h1 Profile
+    if err 
+        h1=err
+    image(src="/"+loggedInUser.avatarUrl, width=150, height=150)
+    form(method="POST", enctype="multipart/form-data")
+        label(for="avatar") 프로필 사진
+        input(name="avatarUrl", type="file", accept="image/*", id="avatar")
+        input(name="email",placeholder="E-mail", type="email", required, readonly, value=loggedInUser.email)
+        input(name="username",placeholder="username", type="text", required, maxlength=20, value=loggedInUser.username)
+        button Edit
+    hr
+    if !loggedInUser.socialUser
+        a(href="/users/change-password") 비밀번호 변경
+    hr
+    h3 Email인증
+    if loggedInUser.emailVerification
+        h3 이메일 인증완료!
+    else
+        a(href="/users/email-verification") 이메일 인증하기!

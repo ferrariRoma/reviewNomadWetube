@@ -36,9 +36,6 @@ export const postEdit = async (req, res) => {
     params: { id },
     body: { title, description, hashtags },
   } = req;
-  const {
-    locals: { loggedInUser },
-  } = res;
   const video = await Video.exists({ _id: id });
   if (!video) {
     return res.status(404).render("404", { title: "Not Found", err });
@@ -60,16 +57,19 @@ export const postUpload = async (req, res) => {
     body: { title, description, hashtags },
     file,
   } = req;
+  const {
+    locals: { loggedInUser },
+  } = res;
   try {
     const createdVideo = await Video.create({
       title,
       description,
       hashtags: Video.formatHashtags(hashtags),
       videosUrl: file.path,
-      owner: loggedInUser._id,
+      owner: loggedInUser.id,
     });
-    const uploader = await User.findById({ id: loggedInUser._id });
-    uploader.userVideo.push(createdVideo._id);
+    const uploader = await User.findById({ id: loggedInUser.id });
+    uploader.userVideo.push(createdVideo.id);
     uploader.save();
     return res.redirect("/");
   } catch (err) {
