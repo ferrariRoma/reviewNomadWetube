@@ -5,6 +5,8 @@ block content
     if err 
         h1=err.message 
     else
+        video(width=800, height=500, controls, autoplay=true)
+            source(src=`/${video.videosUrl}`)
         div 
             h3 `Video Title: #{video.title}`
             p=video.hashtags

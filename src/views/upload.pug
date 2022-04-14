@@ -4,7 +4,9 @@ block content
         h1=err.message
     else
         h1 Video Upload
-    form(method="POST")
+    form(method="POST", enctype="multipart/form-data")
+        label(for="video") Video File
+        input(name="videosUrl", id="video", type="file", accept="video/*", required)
         input(name="title", placeholder="title", required, maxlength= 80)
         input(name="description", placeholder="description", required, maxlength= 200)
         input(name="hashtags", placeholder="hashtags", required)

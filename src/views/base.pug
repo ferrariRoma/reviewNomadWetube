@@ -20,6 +20,7 @@ html(lang="ko")
                         a(href="/logout") Log Out
                     li
                         a(href="/users/edit") Profile
+                    image(src="/"+loggedInUser.avatarUrl, width="25", height="25")
         header
             form(method="GET", action="/search")
                 input(name="search",placeholder="Search Video")
