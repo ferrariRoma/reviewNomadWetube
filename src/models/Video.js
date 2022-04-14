@@ -9,8 +9,8 @@ const videoSchema = new mongoose.Schema({
     views: { type: Number, default: 0, required: true },
   },
   videosUrl: { type: String, required: true },
+  owner: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   //   thumbUrl: {type: String, required: true},
-  //   owner: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "User"},
   //   comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment"}],
 });
 

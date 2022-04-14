@@ -18,6 +18,7 @@ const userSchema = new mongoose.Schema({
   emailVerification: { type: Boolean, default: false },
   socialUser: { type: Boolean, default: false },
   avatarUrl: String,
+  userVideo: [{ type: mongoose.Schema.Types.ObjectId, ref: "Video" }],
 });
 
 userSchema.pre("save", async function () {

@@ -7,7 +7,7 @@ import { token } from "morgan";
 import session from "express-session";
 
 export const getJoin = (req, res) => {
-  return res.render("", { title: "Join" });
+  return res.render("join", { title: "Join" });
 };
 
 export const postJoin = async (req, res) => {
@@ -54,6 +54,7 @@ export const postJoin = async (req, res) => {
       username,
       password,
       email,
+      avatarUrl: "uploads/avatars/avatar.png",
     });
     return res.redirect("/login");
   } catch (err) {
@@ -95,7 +96,7 @@ export const logout = (req, res) => {
 };
 
 export const getUserEdit = (req, res) => {
-  return res.render("profile", { title: "Profile" });
+  return res.render("edit-profile", { title: "edit-Profile" });
 };
 export const postUserEdit = async (req, res) => {
   const {
@@ -111,15 +112,22 @@ export const postUserEdit = async (req, res) => {
   const checkExists = await User.findOne({ username });
   // 다른 유저의 사용여부
   if (checkExists && checkExists._id.toString() !== _id.toString()) {
-    return res.render("profile", {
-      title: "Profile",
+    return res.render("edit-profile", {
+      title: "edit-Profile",
       err: "이미 사용중인 유저명입니다.",
     });
   }
 
   const modifiedProfile = await User.findByIdAndUpdate(
     _id,
-    { username, avatarUrl: file ? file.path : avatarUrl },
+    {
+      username,
+      avatarUrl: file
+        ? file.path
+        : undefined
+        ? "uploads/avatars/avatar.png"
+        : avatarUrl,
+    },
     { new: true }
   );
   req.session.user = modifiedProfile;
@@ -127,7 +135,7 @@ export const postUserEdit = async (req, res) => {
   console.log("after file: ", file);
   console.log("after locals: ", res.locals);
 
-  return res.render("profile", { title: "Profile" });
+  return res.render("edit-profile", { title: "edit-Profile" });
 };
 
 export const getChangePassword = (req, res) => {
@@ -257,12 +265,12 @@ export const getEmailVerification = async (req, res) => {
 
   try {
     await transporter.sendMail(option);
-    return res.redirect("/", {
+    return res.render("emailVerification", {
       title: "Verify",
       verificationMessage: "인증메일을 보냈습니다!",
     });
   } catch (err) {
-    return res.render("emailVerification", {
+    return res.status(400).render("emailVerification", {
       title: "Verify",
       err,
     });
@@ -360,7 +368,7 @@ export const finishNaverLogin = async (req, res) => {
         email,
         emailVerification: true,
         socialUser: true,
-        avatarUrl: profile_image,
+        avatarUrl: undefined ? "uploads/avatars/avatar.png" : profile_image,
       });
     }
     req.session.user = user;
@@ -372,4 +380,8 @@ export const finishNaverLogin = async (req, res) => {
       .status(404)
       .redirect("/login", { error: "이미 사용 중인 이메일 입니다." });
   }
+};
+
+export const getProfile = (req, res) => {
+  return res.render("my-profile");
 };

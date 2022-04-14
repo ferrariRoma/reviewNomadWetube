@@ -10,6 +10,7 @@ import {
   postUserEdit,
   getChangePassword,
   postChangePassword,
+  getProfile,
 } from "../controllers/userController";
 import {
   avatarUploadMiddleware,
@@ -26,6 +27,7 @@ userRouter
   .all(loggedOnlyMiddleware)
   .get(getUserEdit)
   .post(avatarUploadMiddleware.single("avatarUrl"), postUserEdit);
+userRouter.get("/profile/:id([0-9a-f]{24})", getProfile);
 userRouter
   .route("/change-password")
   .all(loggedOnlyMiddleware)
