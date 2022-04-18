@@ -66,10 +66,10 @@ export const postUpload = async (req, res) => {
       description,
       hashtags: Video.formatHashtags(hashtags),
       videosUrl: file.path,
-      owner: loggedInUser.id,
+      owner: loggedInUser._id,
     });
-    const uploader = await User.findById({ id: loggedInUser.id });
-    uploader.userVideo.push(createdVideo.id);
+    const uploader = await User.findById({ _id: loggedInUser._id });
+    uploader.userVideo.push(createdVideo._id);
     uploader.save();
     return res.redirect("/");
   } catch (err) {
