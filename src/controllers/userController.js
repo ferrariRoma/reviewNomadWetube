@@ -131,8 +131,6 @@ export const postUserEdit = async (req, res) => {
   );
   req.session.user = modifiedProfile;
   res.locals.loggedInUser = req.session.user;
-  console.log("after file: ", file);
-  console.log("after locals: ", res.locals);
 
   return res.render("edit-profile", { title: "edit-Profile" });
 };

@@ -5,10 +5,9 @@ block content
     h1 Home
     if err
         h3=err.message
+    div
+        a(href="videos/upload") Upload Video&rarr;
+    each video in videos
+            +video(video)
     else
-        div
-            a(href="videos/upload") Upload Video&rarr;
-        each video in videos
-                +video(video)
-        else
-            h3 No Video
+        h3 No Video
