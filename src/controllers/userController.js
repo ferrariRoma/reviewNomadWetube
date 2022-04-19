@@ -380,6 +380,10 @@ export const finishNaverLogin = async (req, res) => {
   }
 };
 
-export const getProfile = (req, res) => {
-  return res.render("my-profile");
+export const getProfile = async (req, res) => {
+  const {
+    params: { id },
+  } = req;
+  const user = await User.findById(id).populate("userVideo");
+  return res.render("my-profile", { user });
 };

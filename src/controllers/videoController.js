@@ -12,7 +12,7 @@ export const watchVideo = async (req, res) => {
   const {
     params: { id },
   } = req;
-  const video = await Video.findById(id);
+  const video = await Video.findById(id).populate("owner");
   if (!video) {
     res.status(404).render("404", { title: "Video Not Found", err });
   }
