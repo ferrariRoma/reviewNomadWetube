@@ -22,7 +22,7 @@ html(lang="ko")
                         a(href="/users/edit") Profile
                     li 
                         a(href=`/users/profile/${loggedInUser._id}`)
-                            image(src="/"+loggedInUser.avatarUrl, width="25", height="25")
+                            image(src=`/${loggedInUser.avatarUrl}`, width="25", height="25")
         header
             form(method="GET", action="/search")
                 input(name="search",placeholder="Search Video")

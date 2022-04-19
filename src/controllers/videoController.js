@@ -30,10 +30,12 @@ export const getEdit = async (req, res) => {
     },
   } = res;
   const video = await Video.findById(id);
-  if (!video.owner.toString() === _id.toString()) {
+  if (!(video.owner.toString() === _id.toString())) {
+    const videos = await Video.find({});
     return res.status(401).render("home", {
       title: "Home",
       err: { message: "접근할 수 없습니다." },
+      videos,
     });
   }
   if (!video) {

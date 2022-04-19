@@ -100,7 +100,7 @@ export const getUserEdit = (req, res) => {
 export const postUserEdit = async (req, res) => {
   const {
     session: {
-      user: { _id, username: sessionUsername, avatarUrl },
+      user: { _id, avatarUrl },
     },
     body: { username },
     file,
@@ -355,19 +355,18 @@ export const finishNaverLogin = async (req, res) => {
     const userJson = await userData.json();
 
     const {
-      response: { email, nickname, profile_image },
+      response: { email, nickname },
     } = userJson;
-
-    console.log("프로필 이미지: ", profile_image);
-    const user = await User.findOne({ email });
+    let user;
+    user = await User.findOne({ email });
     if (!user) {
-      const user = await User.create({
+      user = await User.create({
         username: nickname,
         password: "",
         email,
         emailVerification: true,
         socialUser: true,
-        avatarUrl: undefined ? "uploads/avatars/avatar.png" : profile_image,
+        avatarUrl: "uploads/avatars/avatar.png",
       });
     }
     req.session.user = user;
