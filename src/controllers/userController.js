@@ -71,7 +71,6 @@ export const postLogin = async (req, res) => {
     body: { email, password },
   } = req;
   const user = await User.findOne({ email });
-
   if (!user) {
     return res.status(400).render("login", {
       title: "Login",
@@ -265,6 +264,7 @@ export const getEmailVerification = async (req, res) => {
 
   try {
     await transporter.sendMail(option);
+    console.log("보냄!");
     return res.render("emailVerification", {
       title: "Verify",
       verificationMessage: "인증메일을 보냈습니다!",
@@ -360,9 +360,10 @@ export const finishNaverLogin = async (req, res) => {
       response: { email, nickname, profile_image },
     } = userJson;
 
+    console.log("프로필 이미지: ", profile_image);
     const user = await User.findOne({ email });
     if (!user) {
-      const user = User.create({
+      const user = await User.create({
         username: nickname,
         password: "",
         email,
