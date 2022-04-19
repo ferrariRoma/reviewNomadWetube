@@ -17,8 +17,8 @@ block content
             br
             if(String(video.owner) === String(loggedInUser._id))
                 a(href=`${video.id}/edit`) Edit &rarr;
-                form(action=`${video.id}/delete`, method="DELETE")
-                    button Delete  &rarr;
+                br
+                a(href=`${video.id}/delete`) Delete  &rarr;
         div
             h3 Other Videos
             each info in otherVideo
