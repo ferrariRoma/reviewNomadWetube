@@ -8,16 +8,14 @@ block content
         video(width=800, height=500, controls, autoplay=true)
             source(src=`/${video.videosUrl}`)
         div 
-            h3 Video Title: #{video.title}
-            a(href=`/users/profile/${video.owner._id}`)
-                p=video.owner.username
+            h3 `Video Title: #{video.title}`
             p=video.hashtags
             if (video.meta.views === 0 || video.meta.views === 1)
                 samll #{video.meta.views} view
             else
                 samll #{video.meta.views} views
             br
-            if(String(video.owner._id) === String(loggedInUser._id))
+            if(String(video.owner) === String(loggedInUser._id))
                 a(href=`${video.id}/edit`) Edit &rarr;
                 br
                 a(href=`${video.id}/delete`) Delete  &rarr;
