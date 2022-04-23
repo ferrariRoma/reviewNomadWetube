@@ -93,13 +93,24 @@ export const postUpload = async (req, res) => {
 export const deleteVideo = async (req, res) => {
   const {
     params: { id },
+    session: { user },
   } = req;
   const video = await Video.exists({ _id: id });
   if (!video) {
     return res.status(404).render("404", { title: "Not Found", err });
   }
-  await Video.findByIdAndDelete(id);
-  return res.redirect("/");
+  try {
+    const userInfo = await User.findById(user._id);
+    await Video.findByIdAndDelete(id);
+    userInfo.userVideo.splice(userInfo.userVideo.indexOf(id), 1);
+    await userInfo.save();
+    req.session.user = userInfo;
+    res.locals.loggedInUser = req.session.user;
+    return res.redirect("/");
+  } catch (err) {
+    console.log(err);
+    return res.render("home", { title: "home", err });
+  }
 };
 
 export const searchVideo = async (req, res) => {
