@@ -12,7 +12,7 @@ export const watchVideo = async (req, res) => {
   const {
     params: { id },
   } = req;
-  const video = await Video.findById(id);
+  const video = await Video.findById(id).populate("owner");
   if (!video) {
     res.status(404).render("404", { title: "Video Not Found", err });
   }
@@ -95,7 +95,7 @@ export const deleteVideo = async (req, res) => {
     params: { id },
     session: { user },
   } = req;
-  const video = await Video.findById(id).populate("owner");
+  const video = await Video.exists({ _id: id });
   if (!video) {
     return res.status(404).render("404", { title: "Not Found", err });
   }
