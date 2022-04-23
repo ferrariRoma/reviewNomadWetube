@@ -1,5 +1,10 @@
 extends base
+include mixins/video
 
 block content
-    image(src=`/${loggedInUser.avatarUrl}`, width=150, height=150)
-    h3=loggedInUser.username
+    image(src=`/${user.avatarUrl}`, width=150, height=150)
+    h3=user.username
+    each video in user.userVideo
+        +video(video)
+    else 
+        p 올린 영상이 없습니다.
