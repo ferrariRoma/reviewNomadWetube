@@ -6,14 +6,16 @@ const BASIC_JS = "./src/client/js/";
 module.exports = {
   entry: BASIC_JS + "main.js",
   mode: "development",
+  watch: true,
   plugins: [
     new MiniCssExtractPlugin({
-      filename: "css/style.css",
+      filename: "css/styles.css",
     }),
   ],
   output: {
     filename: "js/main.js",
     path: path.resolve(__dirname, "assets"),
+    clean: true,
   },
   module: {
     rules: [
